@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  </head>
+  <body>
+
+    <nav class="w-full bg-white border-b shadow-sm">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex h-14 items-center justify-center space-x-6">
+
+          <a
+            routerLink="/"
+            routerLinkActive="text-blue-600 border-blue-600"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="px-3 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-900 hover:border-gray-300 transition"
+          >
+            Update
+          </a>
+
+          <a
+            routerLink="/retains"
+            routerLinkActive="text-blue-600 border-blue-600"
+            class="px-3 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-900 hover:border-gray-300 transition"
+          >
+            Retains
+          </a>
+
+          <a
+            routerLink="/qc"
+            routerLinkActive="text-blue-600 border-blue-600"
+            class="px-3 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-900 hover:border-gray-300 transition"
+          >
+            QC
+          </a>
+
+          <a
+            routerLink="/results"
+            routerLinkActive="text-blue-600 border-blue-600"
+            class="px-3 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-900 hover:border-gray-300 transition"
+          >
+            Results
+          </a>
+
+          <a
+            routerLink="/reminders"
+            routerLinkActive="text-blue-600 border-blue-600"
+            class="px-3 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-900 hover:border-gray-300 transition"
+          >
+            Reminders
+          </a>
+
+        </div>
+      </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto mt-12 px-4">
+      <div class="bg-white shadow-lg rounded-xl">
+
+        <!-- Card header -->
+        <div class="border-b bg-white px-6 py-4">
+          <h3 class="text-center text-gray-900 font-semibold text-xl">
+            {{ title() }}
+          </h3>
+        </div>
+
+        <!-- Card body -->
+        <div class="bg-gray-50 px-6 py-5">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </div>
+
+    <footer class="flex items-center justify-center text-sm text-gray-500 py-4">
+      © 2026 Austin Lancaster
+    </footer>
+
+  </body>
+</html>

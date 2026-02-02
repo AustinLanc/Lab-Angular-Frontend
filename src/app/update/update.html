@@ -1,0 +1,85 @@
+<form action="/update" method="post" class="space-y-4">
+
+  <div>
+    <label for="code_batch" class="block mb-1 text-sm font-semibold text-gray-800">
+      Product Code and Batch Number
+    </label>
+    <div class="flex rounded-md overflow-hidden border border-gray-300 bg-white">
+      <span class="flex items-center px-3 bg-gray-200 text-gray-800">
+        <i class="fas fa-barcode"></i>
+      </span>
+      <input
+        type="text"
+        id="code_batch"
+        name="code_batch"
+        placeholder="e.g. 507450 NA5001"
+        autocomplete="off"
+        autofocus
+        required
+        class="w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+  </div>
+
+  <div>
+    <label for="box" class="block mb-1 text-sm font-semibold text-gray-800">
+      Box Number
+    </label>
+    <div class="flex rounded-md overflow-hidden border border-gray-300 bg-white">
+      <span class="flex items-center px-3 bg-gray-200 text-gray-800">
+        <i class="fas fa-box"></i>
+      </span>
+      <input
+        type="text"
+        id="box"
+        name="box"
+        placeholder="e.g. 15"
+        autocomplete="off"
+        required
+        class="w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+  </div>
+
+  <div>
+    <label for="date" class="block mb-1 text-sm font-semibold text-gray-800">
+      Date
+    </label>
+    <div class="flex rounded-md overflow-hidden border border-gray-300 bg-white">
+      <span class="flex items-center px-3 bg-gray-200 text-gray-800">
+        <i class="fas fa-calendar-alt"></i>
+      </span>
+      <input
+        type="date"
+        id="date"
+        name="date"
+        class="w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-3 pt-4">
+    <button
+      type="submit"
+      name="action"
+      value="add"
+      class="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gray-900 rounded-md hover:bg-gray-800 transition"
+    >
+      <i class="fas fa-plus-circle"></i>
+      Add Retain
+    </button>
+
+    <button
+      type="submit"
+      name="action"
+      value="remove"
+      class="flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-red-600 border border-red-300 rounded-md hover:bg-red-50 transition"
+    >
+      <i class="fas fa-minus-circle"></i>
+      Remove Retain
+    </button>
+  </div>
+
+</form>
+
+
