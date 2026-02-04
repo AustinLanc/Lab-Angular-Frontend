@@ -1,34 +1,229 @@
-<form action="/reminders" method="post" class="space-y-4">
-
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
   <div>
-    <label for="batch" class="block mb-1 text-sm font-semibold text-gray-800">
-      Batch Number
-    </label>
-    <div class="flex rounded-md overflow-hidden border border-gray-300 bg-white">
-      <span class="flex items-center px-3 bg-gray-200 text-gray-800">
-        <i class="fas fa-barcode"></i>
-      </span>
-      <input
-        type="text"
-        id="batch"
-        name="batch"
-        placeholder="e.g. NA5001"
-        autocomplete="off"
-        autofocus
-        required
-        class="w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
+    <h3 class="text-lg font-semibold">Batch Reminders</h3>
+    <p class="text-sm text-base-content/60">Track batches that need follow-up testing or review</p>
+  </div>
+  <div class="flex gap-2">
+    <button class="btn btn-sm btn-primary gap-2" (click)="loadData()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+      Refresh
+    </button>
+  </div>
+</div>
+
+<!-- Summary Stats -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body p-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm text-base-content/60">Total Active</p>
+          <p class="text-xl font-bold">{{ stats().total }}</p>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="pt-4">
-    <button
-      type="submit"
-      class="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gray-900 rounded-md hover:bg-gray-800 transition"
-    >
-      <i class="fas fa-plus-circle"></i>
-      Add Batch
-    </button>
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body p-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-error/10 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm text-base-content/60">Overdue</p>
+          <p class="text-xl font-bold text-error">{{ stats().overdue }}</p>
+        </div>
+      </div>
+    </div>
   </div>
 
-</form>
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body p-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-warning/10 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm text-base-content/60">Due Today</p>
+          <p class="text-xl font-bold text-warning">{{ stats().dueToday }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body p-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm text-base-content/60">Upcoming</p>
+          <p class="text-xl font-bold text-success">{{ stats().upcoming }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Add Form -->
+<div class="card bg-base-100 shadow-sm mb-6">
+  <div class="card-body">
+    <h3 class="card-title text-base mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+      </svg>
+      Quick Add Batch Reminder
+    </h3>
+    <form class="flex flex-col sm:flex-row gap-3" (ngSubmit)="addReminder()">
+      <div class="form-control flex-1">
+        <label class="input input-bordered flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Enter Batch Number (e.g. NA5001)"
+            class="grow"
+            [(ngModel)]="batchNumber"
+            name="batchNumber"
+          />
+        </label>
+      </div>
+      <select class="select select-bordered w-full sm:w-48" [(ngModel)]="reminderType" name="reminderType">
+        <option value="" disabled selected>Reminder Type</option>
+        <option value="Re-test Required">Re-test Required</option>
+        <option value="QC Review">QC Review</option>
+        <option value="Stability Check">Stability Check</option>
+        <option value="Documentation">Documentation</option>
+      </select>
+      <button type="submit" class="btn btn-primary gap-2" [disabled]="!batchNumber || !reminderType">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        Add
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Loading State -->
+@if (loading()) {
+  <div class="flex justify-center items-center py-12">
+    <span class="loading loading-spinner loading-lg text-primary"></span>
+  </div>
+}
+
+<!-- Reminders List -->
+@if (!loading()) {
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body p-0">
+      <div class="overflow-x-auto">
+        <table class="table">
+          <thead>
+            <tr class="bg-base-200">
+              <th>Batch Number</th>
+              <th>Product</th>
+              <th>Reminder Type</th>
+              <th>Due Date</th>
+              <th>Created By</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (reminder of reminders(); track reminder.batch + reminder.type) {
+              <tr class="hover" [class.bg-error/5]="reminder.status === 'overdue'" [class.bg-warning/5]="reminder.status === 'due_today'">
+                <td>
+                  <span class="font-mono font-medium">{{ reminder.batch }}</span>
+                </td>
+                <td>
+                  <div>
+                    <div class="font-medium">{{ getProductName(reminder.code) }}</div>
+                    <div class="text-sm text-base-content/60">{{ reminder.code }}</div>
+                  </div>
+                </td>
+                <td>
+                  <span class="badge badge-outline badge-sm">{{ reminder.type }}</span>
+                </td>
+                <td>
+                  <div [class.text-error]="reminder.status === 'overdue'" [class.text-warning]="reminder.status === 'due_today'" class="font-medium">
+                    {{ formatDate(reminder.dueDate) }}
+                  </div>
+                  <div class="text-xs" [class.text-error]="reminder.status === 'overdue'" [class.text-warning]="reminder.status === 'due_today'" [class.text-base-content/60]="reminder.status === 'upcoming'">
+                    {{ getDaysUntil(reminder.dueDate) }}
+                  </div>
+                </td>
+                <td>
+                  <div class="flex items-center gap-2">
+                    <div class="avatar placeholder">
+                      <div class="bg-primary text-primary-content rounded-full w-6">
+                        <span class="text-xs">{{ getInitials(reminder.createdBy) }}</span>
+                      </div>
+                    </div>
+                    <span class="text-sm">{{ reminder.createdBy }}</span>
+                  </div>
+                </td>
+                <td>
+                  @if (reminder.status === 'overdue') {
+                    <span class="badge badge-error gap-1">
+                      <span class="w-2 h-2 rounded-full bg-error-content animate-pulse"></span>
+                      Overdue
+                    </span>
+                  } @else if (reminder.status === 'due_today') {
+                    <span class="badge badge-warning gap-1">
+                      <span class="w-2 h-2 rounded-full bg-warning-content"></span>
+                      Due Today
+                    </span>
+                  } @else {
+                    <span class="badge badge-info badge-outline gap-1">Upcoming</span>
+                  }
+                </td>
+                <td>
+                  <div class="flex gap-1">
+                    <button class="btn btn-ghost btn-xs btn-success" title="Mark Complete" (click)="markComplete(reminder)">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </button>
+                    <button class="btn btn-ghost btn-xs text-error" title="Delete" (click)="deleteReminder(reminder)">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="text-center py-8 text-base-content/60">
+                  No reminders yet. Add a batch reminder above to get started.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-between p-4 border-t border-base-200">
+        <div class="text-sm text-base-content/60">Showing {{ reminders().length }} reminders</div>
+      </div>
+    </div>
+  </div>
+}

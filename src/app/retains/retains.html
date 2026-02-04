@@ -1,57 +1,189 @@
-<div class="flex flex-col md:flex-row items-center gap-4 mb-4">
-  <div class="w-full md:w-2/3">
-    <div class="flex rounded-md overflow-hidden border border-gray-300 bg-white">
-      <span class="flex items-center px-3 bg-gray-200 text-gray-800">
-        <i class="fas fa-search"></i>
-      </span>
-      <input
-        type="text"
-        id="search"
-        class="w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        placeholder="Search by Product Code or Batch Number..."
-      >
+<!-- Header with search and actions -->
+<div class="card bg-base-100 shadow-sm mb-6">
+  <div class="card-body">
+    <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+      <!-- Search -->
+      <div class="form-control w-full lg:w-96">
+        <label class="input input-bordered flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search by Product Code, Name, or Batch..."
+            class="grow"
+            (input)="onSearch($event)"
+          />
+        </label>
+      </div>
+
+      <!-- Filters and Actions -->
+      <div class="flex flex-wrap gap-2">
+        <!-- Box Filter -->
+        <select class="select select-bordered select-sm" (change)="onBoxFilter($event)">
+          <option value="all">All Boxes</option>
+          @for (box of boxOptions(); track box) {
+            <option [value]="box">Box {{ box }}</option>
+          }
+        </select>
+
+        <button class="btn btn-sm btn-primary gap-2" (click)="loadData()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Inventory Stats -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body p-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm text-base-content/60">Total Samples</p>
+          <p class="text-xl font-bold">{{ stats().total }}</p>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="w-full md:w-1/3 md:text-right">
-    <button
-      type="button"
-      class="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-red-600 border border-red-300 rounded-md hover:bg-red-50 transition"
-    >
-      <i class="fas fa-trash-alt"></i>
-      Delete Box
-    </button>
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body p-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm text-base-content/60">Active</p>
+          <p class="text-xl font-bold text-success">{{ stats().active }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body p-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-info/10 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-info" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm text-base-content/60">Filtered</p>
+          <p class="text-xl font-bold text-info">{{ filteredRetains().length }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body p-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm text-base-content/60">Boxes</p>
+          <p class="text-xl font-bold text-secondary">{{ boxOptions().length }}</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="overflow-y-auto max-h-[60vh]">
-  <table class="min-w-full border-collapse" id="inventoryTable">
-    <thead class="bg-gray-100 sticky top-0 z-10">
-      <tr class="text-left text-sm font-semibold text-gray-700">
-        <th class="px-3 py-2">Product Code</th>
-        <th class="px-3 py-2">Product Name</th>
-        <th class="px-3 py-2">Batch Number</th>
-        <th class="px-3 py-2">Date Released</th>
-        <th class="px-3 py-2">Box Number</th>
-        <th class="px-3 py-2 text-center">Action</th>
-      </tr>
-    </thead>
-    <tbody class="divide-y divide-gray-200">
-      <tr class="hover:bg-gray-100 text-sm text-gray-800">
-        <td class="px-3 py-2">a</td>
-        <td class="px-3 py-2">b</td>
-        <td class="px-3 py-2">c</td>
-        <td class="px-3 py-2">d</td>
-        <td class="px-3 py-2">e</td>
-        <td class="px-3 py-2 text-center">
-          <button
-            class="inline-flex items-center justify-center p-1.5 text-red-600 border border-red-300 rounded hover:bg-red-50 transition"
-            title="Delete"
-          >
-            <i class="fas fa-trash-alt"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+<!-- Loading State -->
+@if (loading()) {
+  <div class="flex justify-center items-center py-12">
+    <span class="loading loading-spinner loading-lg text-primary"></span>
+  </div>
+}
+
+<!-- Error State -->
+@if (error()) {
+  <div class="alert alert-error mb-6">
+    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <span>{{ error() }}</span>
+    <button class="btn btn-sm" (click)="loadData()">Retry</button>
+  </div>
+}
+
+<!-- Data Table -->
+@if (!loading() && !error()) {
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body p-0">
+      <div class="overflow-x-auto">
+        <table class="table">
+          <thead>
+            <tr class="bg-base-200">
+              <th>Product Code</th>
+              <th>Product Name</th>
+              <th>Batch Number</th>
+              <th>Date Released</th>
+              <th>Box Number</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (retain of filteredRetains(); track retain.id) {
+              <tr class="hover">
+                <td>
+                  <span class="font-mono font-medium">{{ retain.code }}</span>
+                </td>
+                <td>
+                  <div>
+                    <div class="font-medium">{{ getProductName(retain.code) }}</div>
+                  </div>
+                </td>
+                <td>
+                  <span class="font-mono">{{ retain.batch }}</span>
+                </td>
+                <td>
+                  <span class="text-sm">{{ formatDate(retain.date) }}</span>
+                </td>
+                <td>
+                  <span class="badge badge-neutral badge-sm">Box {{ retain.box }}</span>
+                </td>
+                <td>
+                  <div class="flex gap-1">
+                    <button class="btn btn-ghost btn-xs text-error" title="Delete" (click)="deleteRetain(retain)">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="text-center py-8 text-base-content/60">
+                  No retains found
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-between p-4 border-t border-base-200">
+        <div class="text-sm text-base-content/60">Showing {{ filteredRetains().length }} of {{ retains().length }} results</div>
+      </div>
+    </div>
+  </div>
+}

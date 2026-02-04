@@ -1,83 +1,362 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-
-  </head>
-  <body>
-
-    <nav class="w-full bg-white border-b shadow-sm">
-      <div class="max-w-7xl mx-auto px-6">
-        <div class="flex h-14 items-center justify-center space-x-6">
-
-          <a
-            routerLink="/"
-            routerLinkActive="text-blue-600 border-blue-600"
-            [routerLinkActiveOptions]="{ exact: true }"
-            class="px-3 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-900 hover:border-gray-300 transition"
+<div class="flex h-screen bg-base-200">
+  <!-- Sidebar -->
+  <aside
+    class="bg-base-100 border-r border-base-300 flex flex-col sidebar-transition no-print"
+    [class.w-64]="!sidebarCollapsed()"
+    [class.w-20]="sidebarCollapsed()"
+  >
+    <!-- Logo -->
+    <div class="flex items-center h-16 px-4 border-b border-base-300">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 text-primary-content"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
           >
-            Update
-          </a>
-
-          <a
-            routerLink="/retains"
-            routerLinkActive="text-blue-600 border-blue-600"
-            class="px-3 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-900 hover:border-gray-300 transition"
-          >
-            Retains
-          </a>
-
-          <a
-            routerLink="/qc"
-            routerLinkActive="text-blue-600 border-blue-600"
-            class="px-3 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-900 hover:border-gray-300 transition"
-          >
-            QC
-          </a>
-
-          <a
-            routerLink="/results"
-            routerLinkActive="text-blue-600 border-blue-600"
-            class="px-3 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-900 hover:border-gray-300 transition"
-          >
-            Results
-          </a>
-
-          <a
-            routerLink="/reminders"
-            routerLinkActive="text-blue-600 border-blue-600"
-            class="px-3 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-900 hover:border-gray-300 transition"
-          >
-            Reminders
-          </a>
-
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+            />
+          </svg>
         </div>
-      </div>
-    </nav>
-
-    <div class="max-w-7xl mx-auto mt-12 px-4">
-      <div class="bg-white shadow-lg rounded-xl">
-
-        <!-- Card header -->
-        <div class="border-b bg-white px-6 py-4">
-          <h3 class="text-center text-gray-900 font-semibold text-xl">
-            {{ title() }}
-          </h3>
-        </div>
-
-        <!-- Card body -->
-        <div class="bg-gray-50 px-6 py-5">
-          <router-outlet></router-outlet>
-        </div>
+        @if (!sidebarCollapsed()) {
+          <div>
+            <h1 class="font-bold text-lg text-base-content">LIMS</h1>
+            <p class="text-xs text-base-content/60">Lab Management</p>
+          </div>
+        }
       </div>
     </div>
 
-    <footer class="flex items-center justify-center text-sm text-gray-500 py-4">
-      © 2026 Austin Lancaster
-    </footer>
+    <!-- Navigation -->
+    <nav class="flex-1 py-4 overflow-y-auto">
+      <ul class="menu px-2 gap-1">
+        <!-- Dashboard Section -->
+        @if (!sidebarCollapsed()) {
+          <li class="menu-title text-xs uppercase tracking-wider text-base-content/50 px-2 pt-2">
+            Sample Management
+          </li>
+        }
 
-  </body>
-</html>
+        <li>
+          <a
+            routerLink="/update"
+            routerLinkActive="active"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-base-200 transition-colors"
+            [class.justify-center]="sidebarCollapsed()"
+            [class.tooltip]="sidebarCollapsed()"
+            [class.tooltip-right]="sidebarCollapsed()"
+            [attr.data-tip]="sidebarCollapsed() ? 'Update Records' : null"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              />
+            </svg>
+            @if (!sidebarCollapsed()) {
+              <span>Update Records</span>
+            }
+          </a>
+        </li>
+
+        <li>
+          <a
+            routerLink="/retains"
+            routerLinkActive="active"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-base-200 transition-colors"
+            [class.justify-center]="sidebarCollapsed()"
+            [class.tooltip]="sidebarCollapsed()"
+            [class.tooltip-right]="sidebarCollapsed()"
+            [attr.data-tip]="sidebarCollapsed() ? 'Retains Inventory' : null"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+              />
+            </svg>
+            @if (!sidebarCollapsed()) {
+              <span>Retains Inventory</span>
+            }
+          </a>
+        </li>
+
+        @if (!sidebarCollapsed()) {
+          <li class="menu-title text-xs uppercase tracking-wider text-base-content/50 px-2 pt-4">
+            Quality Control
+          </li>
+        }
+
+        <li>
+          <a
+            routerLink="/qc"
+            routerLinkActive="active"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-base-200 transition-colors"
+            [class.justify-center]="sidebarCollapsed()"
+            [class.tooltip]="sidebarCollapsed()"
+            [class.tooltip-right]="sidebarCollapsed()"
+            [attr.data-tip]="sidebarCollapsed() ? 'QC Logs' : null"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+              />
+            </svg>
+            @if (!sidebarCollapsed()) {
+              <span>QC Logs</span>
+            }
+          </a>
+        </li>
+
+        <li>
+          <a
+            routerLink="/results"
+            routerLinkActive="active"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-base-200 transition-colors"
+            [class.justify-center]="sidebarCollapsed()"
+            [class.tooltip]="sidebarCollapsed()"
+            [class.tooltip-right]="sidebarCollapsed()"
+            [attr.data-tip]="sidebarCollapsed() ? 'Test Results' : null"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              />
+            </svg>
+            @if (!sidebarCollapsed()) {
+              <span>Test Results</span>
+            }
+          </a>
+        </li>
+
+        @if (!sidebarCollapsed()) {
+          <li class="menu-title text-xs uppercase tracking-wider text-base-content/50 px-2 pt-4">
+            Notifications
+          </li>
+        }
+
+        <li>
+          <a
+            routerLink="/reminders"
+            routerLinkActive="active"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-base-200 transition-colors"
+            [class.justify-center]="sidebarCollapsed()"
+            [class.tooltip]="sidebarCollapsed()"
+            [class.tooltip-right]="sidebarCollapsed()"
+            [attr.data-tip]="sidebarCollapsed() ? 'Reminders' : null"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+              />
+            </svg>
+            @if (!sidebarCollapsed()) {
+              <span>Reminders</span>
+              <span class="badge badge-primary badge-sm">3</span>
+            }
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Collapse Button -->
+    <div class="border-t border-base-300 p-4">
+      <button
+        (click)="toggleSidebar()"
+        class="btn btn-ghost btn-sm w-full flex items-center justify-center gap-2"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 transition-transform"
+          [class.rotate-180]="sidebarCollapsed()"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+          />
+        </svg>
+        @if (!sidebarCollapsed()) {
+          <span>Collapse</span>
+        }
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <!-- Header -->
+    <header class="bg-base-100 border-b border-base-300 h-16 flex items-center px-6 no-print">
+      <div class="flex-1 flex items-center gap-4">
+        <div>
+          <h2 class="text-xl font-semibold text-base-content">{{ title() }}</h2>
+          <p class="text-sm text-base-content/60">{{ currentDate() }}</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <!-- Search -->
+        <div class="form-control">
+          <div class="input-group">
+            <input
+              type="text"
+              placeholder="Quick search..."
+              class="input input-bordered input-sm w-64"
+            />
+          </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+            <div class="indicator">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                />
+              </svg>
+              <span class="badge badge-primary badge-xs indicator-item"></span>
+            </div>
+          </div>
+          <div
+            tabindex="0"
+            class="dropdown-content card card-compact bg-base-100 z-50 w-80 shadow-lg border border-base-300"
+          >
+            <div class="card-body">
+              <h3 class="font-semibold text-base-content">Notifications</h3>
+              <div class="divider my-1"></div>
+              <div class="space-y-3">
+                <div class="flex gap-3 p-2 rounded-lg hover:bg-base-200">
+                  <div class="w-2 h-2 rounded-full bg-primary mt-2"></div>
+                  <div>
+                    <p class="text-sm font-medium">Batch NA5001 requires QC review</p>
+                    <p class="text-xs text-base-content/60">2 hours ago</p>
+                  </div>
+                </div>
+                <div class="flex gap-3 p-2 rounded-lg hover:bg-base-200">
+                  <div class="w-2 h-2 rounded-full bg-warning mt-2"></div>
+                  <div>
+                    <p class="text-sm font-medium">Retain expiring in 30 days</p>
+                    <p class="text-xs text-base-content/60">Yesterday</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Menu -->
+        <div class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-ghost gap-2">
+            <div class="avatar placeholder">
+              <div class="bg-primary text-primary-content rounded-full w-8">
+                <span class="text-sm">AL</span>
+              </div>
+            </div>
+            <span class="hidden md:inline text-sm font-medium">A. Lancaster</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </div>
+          <ul
+            tabindex="0"
+            class="dropdown-content menu bg-base-100 rounded-box z-50 w-52 p-2 shadow-lg border border-base-300"
+          >
+            <li><a>Profile Settings</a></li>
+            <li><a>System Preferences</a></li>
+            <li class="divider"></li>
+            <li><a class="text-error">Sign Out</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="flex-1 overflow-auto p-6">
+      <div class="max-w-7xl mx-auto">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-base-100 border-t border-base-300 py-3 px-6 no-print">
+      <div class="flex items-center justify-between text-sm text-base-content/60">
+        <span>LIMS v1.0.0</span>
+        <span>&copy; 2026 Austin Lancaster</span>
+      </div>
+    </footer>
+  </div>
+</div>

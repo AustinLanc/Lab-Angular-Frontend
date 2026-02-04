@@ -1,44 +1,185 @@
-<div class="flex flex-col md:flex-row items-center mb-4">
-  <div class="w-full md:w-2/3 mb-3 md:mb-0">
-    <div class="flex rounded-md overflow-hidden border border-gray-300 bg-white">
-      <span class="flex items-center px-3 bg-gray-200 text-gray-800">
-        <i class="fas fa-search"></i>
-      </span>
-      <input
-        type="text"
-        id="search"
-        class="w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        placeholder="Search by Product Code or Batch Number..."
-      >
+<!-- QC Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-base-content/60">Batches Released Today</p>
+          <p class="text-2xl font-bold">{{ stats().releasedToday }}</p>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-success/10 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-base-content/60">Total QC Records</p>
+          <p class="text-2xl font-bold">{{ stats().total }}</p>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm text-base-content/60">Filtered Results</p>
+          <p class="text-2xl font-bold">{{ filteredLogs().length }}</p>
+        </div>
+        <div class="w-12 h-12 rounded-full bg-info/10 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-info" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+          </svg>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="overflow-y-auto max-h-[60vh]">
-  <table class="min-w-full border-collapse">
-    <thead class="bg-gray-100 sticky top-0 z-10">
-      <tr class="text-left text-sm font-semibold text-gray-700">
-        <th class="px-3 py-2">Batch Number</th>
-        <th class="px-3 py-2">Product Code</th>
-        <th class="px-3 py-2">Product Name</th>
-        <th class="px-3 py-2">Suffix</th>
-        <th class="px-3 py-2">Worked Pen</th>
-        <th class="px-3 py-2">Drop Point</th>
-        <th class="px-3 py-2">Date Released</th>
-        <th class="px-3 py-2">Released By</th>
-      </tr>
-    </thead>
-    <tbody class="divide-y divide-gray-200">
-      <tr class="hover:bg-gray-100 text-sm text-gray-800">
-        <td class="px-3 py-2">g</td>
-        <td class="px-3 py-2">f</td>
-        <td class="px-3 py-2">e</td>
-        <td class="px-3 py-2">d</td>
-        <td class="px-3 py-2">c</td>
-        <td class="px-3 py-2">c</td>
-        <td class="px-3 py-2">b</td>
-        <td class="px-3 py-2">a</td>
-      </tr>
-    </tbody>
-  </table>
+<!-- Search and Filters -->
+<div class="card bg-base-100 shadow-sm mb-6">
+  <div class="card-body">
+    <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+      <!-- Search -->
+      <div class="form-control w-full lg:w-96">
+        <label class="input input-bordered flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search by Product Code or Batch Number..."
+            class="grow"
+            (input)="onSearch($event)"
+          />
+        </label>
+      </div>
+
+      <!-- Filters -->
+      <div class="flex flex-wrap gap-2">
+        <select class="select select-bordered select-sm" (change)="onReleasedByFilter($event)">
+          <option value="all">All Users</option>
+          @for (user of releasedByOptions(); track user) {
+            <option [value]="user">{{ user }}</option>
+          }
+        </select>
+
+        <button class="btn btn-sm btn-primary gap-2" (click)="loadData()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- Loading State -->
+@if (loading()) {
+  <div class="flex justify-center items-center py-12">
+    <span class="loading loading-spinner loading-lg text-primary"></span>
+  </div>
+}
+
+<!-- Error State -->
+@if (error()) {
+  <div class="alert alert-error mb-6">
+    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <span>{{ error() }}</span>
+    <button class="btn btn-sm" (click)="loadData()">Retry</button>
+  </div>
+}
+
+<!-- QC Logs Table -->
+@if (!loading() && !error()) {
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body p-0">
+      <div class="overflow-x-auto">
+        <table class="table">
+          <thead>
+            <tr class="bg-base-200">
+              <th>Batch Number</th>
+              <th>Product Code</th>
+              <th>Product Name</th>
+              <th>Suffix</th>
+              <th>Worked Pen</th>
+              <th>Drop Point</th>
+              <th>Date Released</th>
+              <th>Released By</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (log of filteredLogs(); track log.batch) {
+              <tr class="hover">
+                <td>
+                  <span class="font-mono font-medium">{{ log.batch }}</span>
+                </td>
+                <td>
+                  <span class="font-mono">{{ log.code }}</span>
+                </td>
+                <td>
+                  <div>
+                    <div class="font-medium">{{ getProductName(log.code) }}</div>
+                  </div>
+                </td>
+                <td>
+                  <span class="badge badge-ghost badge-sm">{{ log.suffix || '--' }}</span>
+                </td>
+                <td>
+                  <div class="flex items-center gap-2">
+                    <span>{{ log.pen60x || '--' }}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="flex items-center gap-2">
+                    <span>{{ log.dropPoint || '--' }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="text-sm">{{ formatDate(log.date) }}</span>
+                </td>
+                <td>
+                  <div class="flex items-center gap-2">
+                    <div class="avatar placeholder">
+                      <div class="bg-primary text-primary-content rounded-full w-6">
+                        <span class="text-xs">{{ getInitials(log.releasedBy) }}</span>
+                      </div>
+                    </div>
+                    <span class="text-sm">{{ log.releasedBy || '--' }}</span>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="text-center py-8 text-base-content/60">
+                  No QC logs found
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-between p-4 border-t border-base-200">
+        <div class="text-sm text-base-content/60">Showing {{ filteredLogs().length }} of {{ qcLogs().length }} entries</div>
+      </div>
+    </div>
+  </div>
+}
