@@ -1,5 +1,5 @@
 <!-- Stats Overview -->
-<div class="stats shadow bg-base-100 w-full mb-6">
+<div class="stats shadow bg-base-100 w-full mb-4">
   <div class="stat">
     <div class="stat-figure text-primary">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -33,7 +33,7 @@
 
 <!-- Alert Messages -->
 @if (error()) {
-  <div class="alert alert-error mb-4">
+  <div class="alert alert-error mb-2">
     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
@@ -42,7 +42,7 @@
 }
 
 @if (success()) {
-  <div class="alert alert-success mb-4">
+  <div class="alert alert-success mb-2">
     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
@@ -53,84 +53,86 @@
 <!-- Main Form Card -->
 <div class="card bg-base-100 shadow-sm">
   <div class="card-body">
-    <h3 class="card-title text-lg mb-4">
+    <h3 class="card-title text-lg mb-2">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
       </svg>
       Add or Remove Retain Sample
     </h3>
 
-    <form class="space-y-5" (ngSubmit)="addRetain()">
-      <!-- Product Code and Batch -->
-      <div class="form-control w-full">
-        <label class="label">
-          <span class="label-text font-medium">Product Code & Batch Number</span>
-          <span class="label-text-alt text-base-content/60">Required</span>
-        </label>
-        <label class="input input-bordered flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-          </svg>
-          <input
-            type="text"
-            placeholder="e.g. 507450 NA5001"
-            class="grow"
-            autocomplete="off"
-            autofocus
-            [(ngModel)]="productCodeBatch"
-            name="productCodeBatch"
-          />
-        </label>
-        <label class="label">
-          <span class="label-text-alt text-base-content/60">Scan barcode or enter manually</span>
-        </label>
-      </div>
+    <form (ngSubmit)="addRetain()">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Product Code and Batch -->
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text font-medium">Product Code & Batch Number</span>
+            <span class="label-text-alt text-base-content/60">Required</span>
+          </label>
+          <label class="input input-bordered flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="e.g. 507450 NA5001"
+              class="grow"
+              autocomplete="off"
+              autofocus
+              [(ngModel)]="productCodeBatch"
+              name="productCodeBatch"
+            />
+          </label>
+          <label class="label">
+            <span class="label-text-alt text-base-content/60">Scan barcode or enter manually</span>
+          </label>
+        </div>
 
-      <!-- Box Number -->
-      <div class="form-control w-full">
-        <label class="label">
-          <span class="label-text font-medium">Box Number</span>
-          <span class="label-text-alt text-base-content/60">Required</span>
-        </label>
-        <label class="input input-bordered flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-          </svg>
-          <input
-            type="text"
-            placeholder="e.g. 15"
-            class="grow"
-            autocomplete="off"
-            [(ngModel)]="boxNumber"
-            name="boxNumber"
-          />
-        </label>
-      </div>
+        <!-- Box Number -->
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text font-medium">Box Number</span>
+            <span class="label-text-alt text-base-content/60">Required</span>
+          </label>
+          <label class="input input-bordered flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            <input
+              type="text"
+              placeholder="e.g. 15"
+              class="grow"
+              autocomplete="off"
+              [(ngModel)]="boxNumber"
+              name="boxNumber"
+            />
+          </label>
+        </div>
 
-      <!-- Date -->
-      <div class="form-control w-full">
-        <label class="label">
-          <span class="label-text font-medium">Release Date</span>
-          <span class="label-text-alt text-base-content/60">Optional - defaults to today</span>
-        </label>
-        <label class="input input-bordered flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          <input
-            type="date"
-            class="grow"
-            [(ngModel)]="releaseDate"
-            name="releaseDate"
-          />
-        </label>
+        <!-- Date -->
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text font-medium">Release Date</span>
+            <span class="label-text-alt text-base-content/60">Optional - defaults to today</span>
+          </label>
+          <label class="input input-bordered flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <input
+              type="date"
+              class="grow"
+              [(ngModel)]="releaseDate"
+              name="releaseDate"
+            />
+          </label>
+        </div>
       </div>
 
       <!-- Action Buttons -->
-      <div class="divider"></div>
+      <div class="divider my-2"></div>
 
-      <div class="flex flex-col sm:flex-row gap-3">
-        <button type="submit" class="btn btn-primary flex-1 gap-2" [disabled]="loading()">
+      <div class="flex flex-row gap-3">
+        <button type="submit" class="btn btn-primary gap-2" [disabled]="loading()">
           @if (loading()) {
             <span class="loading loading-spinner loading-sm"></span>
           } @else {
@@ -141,7 +143,7 @@
           Add Retain
         </button>
 
-        <button type="button" class="btn btn-outline btn-error flex-1 gap-2" (click)="removeRetain()" [disabled]="loading()">
+        <button type="button" class="btn btn-outline btn-error gap-2" (click)="removeRetain()" [disabled]="loading()">
           @if (loading()) {
             <span class="loading loading-spinner loading-sm"></span>
           } @else {
@@ -158,9 +160,9 @@
 
 <!-- Recent Activity -->
 @if (recentActivity().length > 0) {
-  <div class="card bg-base-100 shadow-sm mt-6">
+  <div class="card bg-base-100 shadow-sm mt-4">
     <div class="card-body">
-      <h3 class="card-title text-lg mb-4">
+      <h3 class="card-title text-lg mb-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
