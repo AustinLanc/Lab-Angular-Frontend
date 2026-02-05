@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ProductName, MonthlyBatch, TestingData, QcLog, Retain } from './models';
+import { ProductName, MonthlyBatch, TestingData, QcLog, Retain, Reminder } from './models';
 
 @Injectable({
   providedIn: 'root'
@@ -196,5 +196,59 @@ export class ApiService {
 
   deleteRetain(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/retains/${id}`);
+  }
+
+  // Reminder endpoints
+  getReminders(): Observable<Reminder[]> {
+    return this.http.get<Reminder[]>(`${this.baseUrl}/reminders`);
+  }
+
+  getPendingReminders(): Observable<Reminder[]> {
+    return this.http.get<Reminder[]>(`${this.baseUrl}/reminders/pending`);
+  }
+
+  getReminderById(id: number): Observable<Reminder> {
+    return this.http.get<Reminder>(`${this.baseUrl}/reminders/${id}`);
+  }
+
+  getRemindersByBatch(batch: string): Observable<Reminder[]> {
+    return this.http.get<Reminder[]>(`${this.baseUrl}/reminders/batch/${batch}`);
+  }
+
+  searchReminders(batch: string): Observable<Reminder[]> {
+    return this.http.get<Reminder[]>(`${this.baseUrl}/reminders/search`, {
+      params: { batch }
+    });
+  }
+
+  createBatchReminders(batch: string, dayOffset?: number): Observable<Reminder[]> {
+    return this.http.post<Reminder[]>(`${this.baseUrl}/reminders`, {
+      batch,
+      dayOffset: dayOffset || 0
+    });
+  }
+
+  createSingleReminder(batch: string, intervalType: string, dayOffset?: number): Observable<Reminder> {
+    return this.http.post<Reminder>(`${this.baseUrl}/reminders/single`, {
+      batch,
+      intervalType,
+      dayOffset: dayOffset || 0
+    });
+  }
+
+  markReminderAsNotified(id: number): Observable<Reminder> {
+    return this.http.put<Reminder>(`${this.baseUrl}/reminders/${id}/notified`, {});
+  }
+
+  deleteReminder(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/reminders/${id}`);
+  }
+
+  deleteReminderByReminderId(reminderId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/reminders/reminder/${reminderId}`);
+  }
+
+  cleanupNotifiedReminders(): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/reminders/cleanup`);
   }
 }

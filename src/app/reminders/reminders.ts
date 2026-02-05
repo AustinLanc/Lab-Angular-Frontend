@@ -2,16 +2,7 @@ import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../api.service';
-import { MonthlyBatch, ProductName } from '../models';
-
-interface Reminder {
-  batch: string;
-  code: number;
-  type: string;
-  dueDate: Date;
-  createdBy: string;
-  status: 'overdue' | 'due_today' | 'upcoming';
-}
+import { Reminder } from '../models';
 
 @Component({
   selector: 'app-reminders',
@@ -21,22 +12,43 @@ interface Reminder {
   styleUrl: './reminders.css',
 })
 export class Reminders implements OnInit {
-  batches = signal<MonthlyBatch[]>([]);
-  products = signal<Map<number, string>>(new Map());
+  reminders = signal<Reminder[]>([]);
   loading = signal(true);
   error = signal<string | null>(null);
 
-  // Local reminders (stored in memory for this session)
-  reminders = signal<Reminder[]>([]);
-
   // Form fields
   batchNumber = '';
-  reminderType = '';
+  dayOffset: number | null = null;
+  selectedDate: string = '';
+  useDate = false;
+
+  filteredReminders = computed(() => {
+    const all = this.reminders();
+    const now = new Date();
+
+    return all.map(r => {
+      const dueDate = new Date(r.due);
+      let status: 'overdue' | 'due_today' | 'upcoming';
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const dueDateOnly = new Date(dueDate);
+      dueDateOnly.setHours(0, 0, 0, 0);
+
+      if (dueDateOnly < today) {
+        status = 'overdue';
+      } else if (dueDateOnly.getTime() === today.getTime()) {
+        status = 'due_today';
+      } else {
+        status = 'upcoming';
+      }
+
+      return { ...r, status };
+    }).sort((a, b) => new Date(a.due).getTime() - new Date(b.due).getTime());
+  });
 
   stats = computed(() => {
-    const all = this.reminders();
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const all = this.filteredReminders();
 
     return {
       total: all.length,
@@ -56,68 +68,89 @@ export class Reminders implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    this.api.getProducts().subscribe({
-      next: (products) => {
-        const productMap = new Map<number, string>();
-        products.forEach(p => productMap.set(p.code, p.name));
-        this.products.set(productMap);
-      },
-      error: (err) => console.error('Failed to load products', err)
-    });
-
-    this.api.getBatches().subscribe({
-      next: (batches) => {
-        this.batches.set(batches);
+    this.api.getPendingReminders().subscribe({
+      next: (reminders) => {
+        this.reminders.set(reminders);
         this.loading.set(false);
       },
       error: (err) => {
-        this.error.set('Failed to load batches');
+        this.error.set('Failed to load reminders');
         this.loading.set(false);
         console.error(err);
       }
     });
   }
 
-  getProductName(code: number): string {
-    return this.products().get(code) || 'Unknown Product';
-  }
-
   addReminder() {
-    if (!this.batchNumber || !this.reminderType) {
+    if (!this.batchNumber) {
       return;
     }
 
-    // Find the batch to get the code
-    const batch = this.batches().find(b => b.batch === this.batchNumber);
-    const code = batch?.code || 0;
+    let offset = 0;
 
-    // Default due date is 7 days from now
-    const dueDate = new Date();
-    dueDate.setDate(dueDate.getDate() + 7);
+    if (this.useDate && this.selectedDate) {
+      // Calculate offset from selected date
+      const selected = new Date(this.selectedDate);
+      selected.setHours(0, 0, 0, 0);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      offset = Math.round((selected.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    } else if (this.dayOffset !== null) {
+      offset = this.dayOffset;
+    }
 
-    const reminder: Reminder = {
-      batch: this.batchNumber,
-      code: code,
-      type: this.reminderType,
-      dueDate: dueDate,
-      createdBy: 'Current User',
-      status: 'upcoming'
-    };
-
-    this.reminders.update(r => [reminder, ...r]);
-    this.batchNumber = '';
-    this.reminderType = '';
+    this.api.createBatchReminders(this.batchNumber, offset).subscribe({
+      next: (newReminders) => {
+        this.loadData();
+        this.batchNumber = '';
+        this.dayOffset = null;
+        this.selectedDate = '';
+      },
+      error: (err) => {
+        this.error.set('Failed to add reminders');
+        console.error(err);
+      }
+    });
   }
 
-  markComplete(reminder: Reminder) {
-    this.reminders.update(r => r.filter(item => item !== reminder));
+  toggleOffsetMode() {
+    this.useDate = !this.useDate;
+    this.dayOffset = null;
+    this.selectedDate = '';
   }
 
-  deleteReminder(reminder: Reminder) {
-    this.reminders.update(r => r.filter(item => item !== reminder));
+  getTodayString(): string {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
   }
 
-  formatDate(date: Date): string {
+  markComplete(reminder: Reminder & { status: string }) {
+    this.api.markReminderAsNotified(reminder.id).subscribe({
+      next: () => {
+        this.loadData();
+      },
+      error: (err) => {
+        this.error.set('Failed to mark reminder as complete');
+        console.error(err);
+      }
+    });
+  }
+
+  deleteReminder(reminder: Reminder & { status: string }) {
+    this.api.deleteReminder(reminder.id).subscribe({
+      next: () => {
+        this.loadData();
+      },
+      error: (err) => {
+        this.error.set('Failed to delete reminder');
+        console.error(err);
+      }
+    });
+  }
+
+  formatDate(dateStr: string): string {
+    if (!dateStr) return '--';
+    const date = new Date(dateStr);
     return date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
@@ -125,10 +158,23 @@ export class Reminders implements OnInit {
     });
   }
 
-  getDaysUntil(date: Date): string {
+  formatDateTime(dateStr: string): string {
+    if (!dateStr) return '--';
+    const date = new Date(dateStr);
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  }
+
+  getDaysUntil(dateStr: string): string {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const due = new Date(date);
+    const due = new Date(dateStr);
     due.setHours(0, 0, 0, 0);
 
     const diffTime = due.getTime() - today.getTime();
@@ -139,8 +185,13 @@ export class Reminders implements OnInit {
     return `In ${diffDays} days`;
   }
 
-  getInitials(name: string): string {
-    if (!name) return '??';
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  getIntervalLabel(interval: string): string {
+    switch (interval) {
+      case '48h': return '48 Hour Check';
+      case '7d': return '7 Day Check';
+      case '3m': return '3 Month Check';
+      case '1y': return '1 Year Check';
+      default: return interval;
+    }
   }
 }

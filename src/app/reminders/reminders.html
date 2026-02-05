@@ -2,7 +2,7 @@
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
   <div>
     <h3 class="text-lg font-semibold">Batch Reminders</h3>
-    <p class="text-sm text-base-content/60">Track batches that need follow-up testing or review</p>
+    <p class="text-sm text-base-content/60">Track batches that need follow-up testing (48h, 7d, 3m, 1y checks)</p>
   </div>
   <div class="flex gap-2">
     <button class="btn btn-sm btn-primary gap-2" (click)="loadData()">
@@ -88,39 +88,91 @@
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
       </svg>
-      Quick Add Batch Reminder
+      Add Batch Reminders
     </h3>
-    <form class="flex flex-col sm:flex-row gap-3" (ngSubmit)="addReminder()">
-      <div class="form-control flex-1">
-        <label class="input input-bordered flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+    <p class="text-sm text-base-content/60 mb-4">Enter a batch number to create reminders at 48h, 7d, 3 month, and 1 year intervals. Use offset for past batches (e.g., -1 for yesterday).</p>
+    <form class="flex flex-col gap-3" (ngSubmit)="addReminder()">
+      <div class="flex flex-col sm:flex-row gap-3">
+        <div class="form-control flex-1">
+          <label class="input input-bordered flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Batch Number (e.g. NA6001X)"
+              class="grow"
+              [(ngModel)]="batchNumber"
+              name="batchNumber"
+            />
+          </label>
+        </div>
+
+        <!-- Offset/Date Toggle -->
+        @if (!useDate) {
+          <div class="form-control w-full sm:w-40">
+            <label class="input input-bordered flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <input
+                type="number"
+                placeholder="Days (e.g. -1)"
+                class="grow w-full"
+                [(ngModel)]="dayOffset"
+                name="dayOffset"
+              />
+            </label>
+          </div>
+        } @else {
+          <div class="form-control w-full sm:w-48">
+            <input
+              type="date"
+              class="input input-bordered"
+              [(ngModel)]="selectedDate"
+              name="selectedDate"
+              [max]="getTodayString()"
+            />
+          </div>
+        }
+
+        <button type="button" class="btn btn-ghost btn-sm" (click)="toggleOffsetMode()" title="Switch between offset and date">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
           </svg>
-          <input
-            type="text"
-            placeholder="Enter Batch Number (e.g. NA5001)"
-            class="grow"
-            [(ngModel)]="batchNumber"
-            name="batchNumber"
-          />
-        </label>
+          {{ useDate ? 'Use Offset' : 'Use Date' }}
+        </button>
+
+        <button type="submit" class="btn btn-primary gap-2" [disabled]="!batchNumber">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          Add
+        </button>
       </div>
-      <select class="select select-bordered w-full sm:w-48" [(ngModel)]="reminderType" name="reminderType">
-        <option value="" disabled selected>Reminder Type</option>
-        <option value="Re-test Required">Re-test Required</option>
-        <option value="QC Review">QC Review</option>
-        <option value="Stability Check">Stability Check</option>
-        <option value="Documentation">Documentation</option>
-      </select>
-      <button type="submit" class="btn btn-primary gap-2" [disabled]="!batchNumber || !reminderType">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-        </svg>
-        Add
-      </button>
+
+      <!-- Help text -->
+      <div class="text-xs text-base-content/50">
+        @if (!useDate) {
+          <span>Day offset: use negative numbers for past dates (e.g., -1 = yesterday, -7 = last week)</span>
+        } @else {
+          <span>Select the date the batch was made to calculate reminder intervals from that date</span>
+        }
+      </div>
     </form>
   </div>
 </div>
+
+<!-- Error State -->
+@if (error()) {
+  <div class="alert alert-error mb-6">
+    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <span>{{ error() }}</span>
+    <button class="btn btn-sm" (click)="loadData()">Retry</button>
+  </div>
+}
 
 <!-- Loading State -->
 @if (loading()) {
@@ -138,45 +190,27 @@
           <thead>
             <tr class="bg-base-200">
               <th>Batch Number</th>
-              <th>Product</th>
-              <th>Reminder Type</th>
+              <th>Check Type</th>
               <th>Due Date</th>
-              <th>Created By</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            @for (reminder of reminders(); track reminder.batch + reminder.type) {
+            @for (reminder of filteredReminders(); track reminder.reminderId) {
               <tr class="hover" [class.bg-error/5]="reminder.status === 'overdue'" [class.bg-warning/5]="reminder.status === 'due_today'">
                 <td>
                   <span class="font-mono font-medium">{{ reminder.batch }}</span>
                 </td>
                 <td>
-                  <div>
-                    <div class="font-medium">{{ getProductName(reminder.code) }}</div>
-                    <div class="text-sm text-base-content/60">{{ reminder.code }}</div>
-                  </div>
-                </td>
-                <td>
-                  <span class="badge badge-outline badge-sm">{{ reminder.type }}</span>
+                  <span class="badge badge-outline badge-sm">{{ getIntervalLabel(reminder.intervalType) }}</span>
                 </td>
                 <td>
                   <div [class.text-error]="reminder.status === 'overdue'" [class.text-warning]="reminder.status === 'due_today'" class="font-medium">
-                    {{ formatDate(reminder.dueDate) }}
+                    {{ formatDateTime(reminder.due) }}
                   </div>
                   <div class="text-xs" [class.text-error]="reminder.status === 'overdue'" [class.text-warning]="reminder.status === 'due_today'" [class.text-base-content/60]="reminder.status === 'upcoming'">
-                    {{ getDaysUntil(reminder.dueDate) }}
-                  </div>
-                </td>
-                <td>
-                  <div class="flex items-center gap-2">
-                    <div class="avatar placeholder">
-                      <div class="bg-primary text-primary-content rounded-full w-6">
-                        <span class="text-xs">{{ getInitials(reminder.createdBy) }}</span>
-                      </div>
-                    </div>
-                    <span class="text-sm">{{ reminder.createdBy }}</span>
+                    {{ getDaysUntil(reminder.due) }}
                   </div>
                 </td>
                 <td>
@@ -211,8 +245,8 @@
               </tr>
             } @empty {
               <tr>
-                <td colspan="7" class="text-center py-8 text-base-content/60">
-                  No reminders yet. Add a batch reminder above to get started.
+                <td colspan="5" class="text-center py-8 text-base-content/60">
+                  No reminders yet. Add a batch number above to create reminders.
                 </td>
               </tr>
             }
@@ -222,7 +256,7 @@
 
       <!-- Pagination -->
       <div class="flex items-center justify-between p-4 border-t border-base-200">
-        <div class="text-sm text-base-content/60">Showing {{ reminders().length }} reminders</div>
+        <div class="text-sm text-base-content/60">Showing {{ filteredReminders().length }} reminders</div>
       </div>
     </div>
   </div>

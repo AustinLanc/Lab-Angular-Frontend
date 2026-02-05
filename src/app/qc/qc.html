@@ -119,14 +119,7 @@
                   <span class="text-sm">{{ formatDate(log.date) }}</span>
                 </td>
                 <td>
-                  <div class="flex items-center gap-2">
-                    <div class="avatar placeholder">
-                      <div class="bg-primary text-primary-content rounded-full w-6">
-                        <span class="text-xs">{{ getInitials(log.releasedBy) }}</span>
-                      </div>
-                    </div>
-                    <span class="text-sm">{{ log.releasedBy || '--' }}</span>
-                  </div>
+                  <span class="text-sm">{{ log.releasedBy || '--' }}</span>
                 </td>
               </tr>
             } @empty {

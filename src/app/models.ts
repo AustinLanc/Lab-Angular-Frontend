@@ -61,3 +61,13 @@ export interface Retain {
   date: string;
   box: number;
 }
+
+export interface Reminder {
+  id: number;
+  reminderId: string;
+  batch: string;
+  intervalType: string;
+  due: string;
+  notified: boolean;
+  createdAt: string;
+}
