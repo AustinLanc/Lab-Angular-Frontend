@@ -45,6 +45,7 @@
           type="text"
           placeholder="Search by Product Code or Batch Number..."
           class="grow"
+          [value]="searchTerm()"
           (input)="onSearch($event)"
         />
       </label>
@@ -89,7 +90,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (log of filteredLogs(); track log.batch) {
+            @for (log of filteredLogs(); track $index) {
               <tr class="hover">
                 <td>
                   <span class="font-mono font-medium">{{ log.batch }}</span>

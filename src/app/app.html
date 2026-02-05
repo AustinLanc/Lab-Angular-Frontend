@@ -172,6 +172,42 @@
 
         @if (!sidebarCollapsed()) {
           <li class="menu-title text-xs uppercase tracking-wider text-base-content/50 px-2 pt-4">
+            Reports
+          </li>
+        }
+
+        <li>
+          <a
+            routerLink="/production"
+            routerLinkActive="active"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-base-200 transition-colors"
+            [class.justify-center]="sidebarCollapsed()"
+            [class.tooltip]="sidebarCollapsed()"
+            [class.tooltip-right]="sidebarCollapsed()"
+            [attr.data-tip]="sidebarCollapsed() ? 'Production Stats' : null"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"
+              />
+            </svg>
+            @if (!sidebarCollapsed()) {
+              <span>Production Stats</span>
+            }
+          </a>
+        </li>
+
+        @if (!sidebarCollapsed()) {
+          <li class="menu-title text-xs uppercase tracking-wider text-base-content/50 px-2 pt-4">
             Notifications
           </li>
         }
@@ -242,24 +278,74 @@
   <!-- Main Content -->
   <div class="flex-1 flex flex-col overflow-hidden">
     <!-- Header -->
-    <header class="bg-base-100 border-b border-base-300 h-16 flex items-center px-6 no-print">
-      <div class="flex-1 flex items-center gap-4">
-        <div>
-          <h2 class="text-xl font-semibold text-base-content">{{ title() }}</h2>
-          <p class="text-sm text-base-content/60">{{ currentDate() }}</p>
+    <header class="bg-base-100 border-b border-base-300 h-16 flex items-center px-3 md:px-6 no-print">
+      <div class="flex-1 flex items-center gap-4 min-w-0">
+        <div class="min-w-0">
+          <h2 class="text-lg md:text-xl font-semibold text-base-content truncate">{{ title() }}</h2>
+          <p class="text-xs md:text-sm text-base-content/60 hidden sm:block">{{ currentDate() }}</p>
         </div>
       </div>
 
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2 md:gap-4 flex-shrink-0">
         <!-- Search -->
-        <div class="form-control">
+        <div class="form-control relative hidden sm:block">
           <div class="input-group">
             <input
               type="text"
-              placeholder="Quick search..."
-              class="input input-bordered input-sm w-64"
+              placeholder="Search batch..."
+              class="input input-bordered input-sm w-32 md:w-48 lg:w-64"
+              [value]="searchQuery"
+              (input)="onSearchInput($event)"
+              (focus)="showSuggestions.set(searchSuggestions().length > 0)"
+              (blur)="hideSuggestions()"
             />
           </div>
+          @if (showSuggestions() && (searchSuggestions().length > 0 || searchLoading())) {
+            <div class="absolute top-full left-0 mt-1 w-full bg-base-100 border border-base-300 rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto">
+              @if (searchLoading()) {
+                <div class="p-3 text-center text-base-content/60">
+                  <span class="loading loading-spinner loading-sm"></span>
+                  Searching...
+                </div>
+              } @else {
+                @for (suggestion of searchSuggestions(); track suggestion.label) {
+                  <button
+                    class="w-full px-3 py-2 text-left hover:bg-base-200 flex items-center gap-2 text-sm"
+                    (mousedown)="selectSuggestion(suggestion)"
+                  >
+                    @if (suggestion.type === 'qc') {
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                      </svg>
+                    } @else if (suggestion.type === 'retains') {
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                      </svg>
+                    } @else {
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                    }
+                    <span class="font-mono">{{ suggestion.batch }}</span>
+                    <span class="text-base-content/60">
+                      @if (suggestion.type === 'qc') {
+                        (QC Logs)
+                      } @else if (suggestion.type === 'retains') {
+                        (Retains)
+                      } @else {
+                        (Results)
+                      }
+                    </span>
+                  </button>
+                }
+                @if (searchSuggestions().length === 0) {
+                  <div class="p-3 text-center text-base-content/60 text-sm">
+                    No results found
+                  </div>
+                }
+              }
+            </div>
+          }
         </div>
 
         <!-- Notifications -->
@@ -310,13 +396,13 @@
         </div>
 
         <!-- User Display -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1 md:gap-2">
           <div class="avatar placeholder">
-            <div class="bg-primary text-primary-content rounded-full w-8">
+            <div class="bg-primary text-primary-content rounded-full w-8 flex items-center justify-center">
               <span class="text-sm">{{ getUserInitials() }}</span>
             </div>
           </div>
-          <span class="hidden md:inline text-sm font-medium">{{ getUserDisplayName() }}</span>
+          <span class="hidden lg:inline text-sm font-medium truncate max-w-24">{{ getUserDisplayName() }}</span>
           <button class="btn btn-ghost btn-sm btn-circle text-error" (click)="logout()" title="Sign Out">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

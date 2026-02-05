@@ -19,16 +19,6 @@
     <div class="stat-title">Active Boxes</div>
     <div class="stat-value text-secondary">{{ stats().activeBoxes }}</div>
   </div>
-
-  <div class="stat">
-    <div class="stat-figure text-accent">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    </div>
-    <div class="stat-title">Pending Review</div>
-    <div class="stat-value text-accent">{{ stats().pendingReview }}</div>
-  </div>
 </div>
 
 <!-- Alert Messages -->
@@ -64,20 +54,20 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <!-- Product Code and Batch -->
         <div class="form-control w-full">
-          <label class="label">
-            <span class="label-text font-medium">Product Code & Batch Number</span>
-            <span class="label-text-alt text-base-content/60">Required</span>
+          <label class="label flex-wrap">
+            <span class="label-text font-medium text-sm">Code & Batch</span>
+            <span class="label-text-alt text-base-content/60 hidden sm:inline">Required</span>
           </label>
           <label class="input input-bordered flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
             </svg>
             <input
+              #codeBatchInput
               type="text"
               placeholder="e.g. 507450 NA5001"
               class="grow"
               autocomplete="off"
-              autofocus
               [(ngModel)]="productCodeBatch"
               name="productCodeBatch"
             />
@@ -89,9 +79,9 @@
 
         <!-- Box Number -->
         <div class="form-control w-full">
-          <label class="label">
-            <span class="label-text font-medium">Box Number</span>
-            <span class="label-text-alt text-base-content/60">Required</span>
+          <label class="label flex-wrap">
+            <span class="label-text font-medium text-sm">Box Number</span>
+            <span class="label-text-alt text-base-content/60 hidden sm:inline">Required</span>
           </label>
           <label class="input input-bordered flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -110,9 +100,9 @@
 
         <!-- Date -->
         <div class="form-control w-full">
-          <label class="label">
-            <span class="label-text font-medium">Release Date</span>
-            <span class="label-text-alt text-base-content/60">Optional - defaults to today</span>
+          <label class="label flex-wrap">
+            <span class="label-text font-medium text-sm">Release Date</span>
+            <span class="label-text-alt text-base-content/60 hidden sm:inline">Optional</span>
           </label>
           <label class="input input-bordered flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">

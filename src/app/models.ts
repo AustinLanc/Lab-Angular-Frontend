@@ -71,3 +71,13 @@ export interface Reminder {
   notified: boolean;
   createdAt: string;
 }
+
+export interface MonthlyStats {
+  year: number;
+  month: number;
+  monthName: string;
+  batchesReleased: number;
+  totalPounds: number;
+  reworkBatches: number;
+  reworkPounds: number;
+}

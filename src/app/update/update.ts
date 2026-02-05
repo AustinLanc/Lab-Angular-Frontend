@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, AfterViewInit, signal, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../api.service';
@@ -19,7 +19,9 @@ interface RecentActivity {
   templateUrl: './update.html',
   styleUrl: './update.css',
 })
-export class Update implements OnInit {
+export class Update implements OnInit, AfterViewInit {
+  @ViewChild('codeBatchInput') codeBatchInput!: ElementRef<HTMLInputElement>;
+
   retains = signal<Retain[]>([]);
   products = signal<Map<number, string>>(new Map());
   loading = signal(false);
@@ -44,6 +46,16 @@ export class Update implements OnInit {
   ngOnInit() {
     this.loadData();
     this.releaseDate = new Date().toISOString().split('T')[0];
+  }
+
+  ngAfterViewInit() {
+    this.focusInput();
+  }
+
+  focusInput() {
+    setTimeout(() => {
+      this.codeBatchInput?.nativeElement?.focus();
+    }, 0);
   }
 
   loadData() {
@@ -180,6 +192,7 @@ export class Update implements OnInit {
     this.productCodeBatch = '';
     this.boxNumber = '';
     this.releaseDate = new Date().toISOString().split('T')[0];
+    this.focusInput();
   }
 
   formatTimeAgo(date: Date): string {

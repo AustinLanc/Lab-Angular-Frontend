@@ -12,6 +12,7 @@
             type="text"
             placeholder="Search by Product Code, Name, or Batch..."
             class="grow"
+            [value]="searchTerm()"
             (input)="onSearch($event)"
           />
         </label>

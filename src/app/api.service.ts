@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ProductName, MonthlyBatch, TestingData, QcLog, Retain, Reminder } from './models';
+import { ProductName, MonthlyBatch, TestingData, QcLog, Retain, Reminder, MonthlyStats } from './models';
 
 @Injectable({
   providedIn: 'root'
@@ -75,6 +75,19 @@ export class ApiService {
 
   deleteBatch(batch: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/batches/${batch}`);
+  }
+
+  // Batch Stats endpoints
+  getAvailableYears(): Observable<number[]> {
+    return this.http.get<number[]>(`${this.baseUrl}/batches/stats/years`);
+  }
+
+  getMonthlyStats(year: number): Observable<MonthlyStats[]> {
+    return this.http.get<MonthlyStats[]>(`${this.baseUrl}/batches/stats/${year}`);
+  }
+
+  getCurrentYearStats(): Observable<MonthlyStats[]> {
+    return this.http.get<MonthlyStats[]>(`${this.baseUrl}/batches/stats`);
   }
 
   // Testing Data endpoints

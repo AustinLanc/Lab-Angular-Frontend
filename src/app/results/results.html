@@ -12,6 +12,7 @@
             type="text"
             placeholder="Search by Product Code or Batch Number..."
             class="grow"
+            [value]="searchTerm()"
             (input)="onSearch($event)"
           />
         </label>
@@ -103,7 +104,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (item of filteredData(); track item.batch) {
+            @for (item of filteredData(); track $index) {
               <tr class="hover">
                 <th class="bg-base-100 font-mono font-medium">{{ item.batch }}</th>
                 <td class="bg-base-100 font-mono">{{ item.code }}</td>
@@ -129,21 +130,10 @@
         </table>
       </div>
 
-      <!-- Legend and Pagination -->
+      <!-- Pagination -->
       <div class="border-t border-base-200 p-4">
-        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-          <!-- Legend -->
-          <div class="flex flex-wrap gap-4 text-sm">
-            <div class="flex items-center gap-2">
-              <span class="text-base-content/40">--</span>
-              <span class="text-base-content/60">Not tested</span>
-            </div>
-          </div>
-
-          <!-- Pagination -->
-          <div class="flex items-center gap-4">
-            <div class="text-sm text-base-content/60">Showing {{ filteredData().length }} of {{ testingData().length }} results</div>
-          </div>
+        <div class="flex items-center justify-end">
+          <div class="text-sm text-base-content/60">Showing {{ filteredData().length }} of {{ testingData().length }} results</div>
         </div>
       </div>
     </div>

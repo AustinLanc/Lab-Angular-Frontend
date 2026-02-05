@@ -1,0 +1,119 @@
+<!-- Header with Year Selector -->
+<div class="card bg-base-100 shadow-sm mb-4">
+  <div class="card-body py-3">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <h3 class="text-lg font-semibold">Production Statistics</h3>
+      <div class="form-control">
+        <select
+          class="select select-bordered select-sm"
+          [value]="selectedYear()"
+          (change)="onYearChange($event)"
+        >
+          @for (year of availableYears(); track year) {
+            <option [value]="year">{{ year }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body p-4">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm text-base-content/60">Total Released</p>
+          <p class="text-2xl font-bold text-primary">{{ formatNumber(totalReleased()) }} lbs</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body p-4">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-lg bg-error/10 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm text-base-content/60">Total Rework</p>
+          <p class="text-2xl font-bold text-error">{{ formatNumber(totalRework()) }} lbs</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+@if (loading()) {
+  <div class="flex justify-center items-center py-12">
+    <span class="loading loading-spinner loading-lg text-primary"></span>
+  </div>
+}
+
+<!-- Error State -->
+@if (error()) {
+  <div class="alert alert-error mb-4">
+    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <span>{{ error() }}</span>
+    <button class="btn btn-sm" (click)="loadStats()">Retry</button>
+  </div>
+}
+
+<!-- Chart -->
+@if (!loading() && !error()) {
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body">
+      <div class="h-80 md:h-96">
+        <canvas #chartCanvas></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Monthly Breakdown Table -->
+  <div class="card bg-base-100 shadow-sm mt-4">
+    <div class="card-body p-0">
+      <div class="overflow-x-auto">
+        <table class="table">
+          <thead>
+            <tr class="bg-base-200">
+              <th>Month</th>
+              <th class="text-right">Batches Released</th>
+              <th class="text-right">Released (lbs)</th>
+              <th class="text-right">Rework Batches</th>
+              <th class="text-right">Rework (lbs)</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (stat of monthlyStats(); track stat.month) {
+              <tr class="hover">
+                <td class="font-medium">{{ stat.monthName }}</td>
+                <td class="text-right">{{ stat.batchesReleased }}</td>
+                <td class="text-right font-mono">{{ formatNumber(stat.totalPounds) }}</td>
+                <td class="text-right">{{ stat.reworkBatches }}</td>
+                <td class="text-right font-mono text-error">{{ formatNumber(stat.reworkPounds) }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="text-center py-8 text-base-content/60">
+                  No data available for {{ selectedYear() }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+}

@@ -81,6 +81,14 @@
   color: #991b1b;
 }
 
+/* Remove focus outline overlap on inputs */
+.input:focus,
+.input:focus-within,
+label.input:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 /* Print styles */
 @media print {
   .no-print {
