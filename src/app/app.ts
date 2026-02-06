@@ -51,7 +51,7 @@ export class App implements OnInit, OnDestroy {
 
   // Computed property to check if we should show the main layout
   showLayout = computed(() => {
-    return this.authService.isAuthenticated() && !this.isLoginPage();
+    return !this.isLoginPage();
   });
 
   constructor(
