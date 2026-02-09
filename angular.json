@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "angularclient": {
+    "labfrontend": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -27,12 +27,7 @@
             ],
             "styles": [
               "src/styles.css"
-            ],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
-            "ssr": {
-              "entry": "src/server.ts"
-            }
+            ]
           },
           "configurations": {
             "production": {
@@ -65,10 +60,10 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "angularclient:build:production"
+              "buildTarget": "labfrontend:build:production"
             },
             "development": {
-              "buildTarget": "angularclient:build:development"
+              "buildTarget": "labfrontend:build:development"
             }
           },
           "defaultConfiguration": "development"
