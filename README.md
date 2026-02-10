@@ -24,12 +24,12 @@ An Angular 21 single-page application for managing grease/lubricant manufacturin
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    Browser (SPA)                         │
+│                    Browser (SPA)                        │
 │  ┌───────────────────────────────────────────────────┐  │
 │  │  Angular 21 App                                   │  │
-│  │  ┌──────────┐  ┌──────────┐  ┌────────────────┐  │  │
-│  │  │ Services │→ │HttpClient│→ │Auth Interceptor│  │  │
-│  │  └──────────┘  └──────────┘  └────────────────┘  │  │
+│  │  ┌──────────┐  ┌──────────┐  ┌────────────────┐   │  │
+│  │  │ Services │→ │HttpClient│→ │Auth Interceptor│   │  │
+│  │  └──────────┘  └──────────┘  └────────────────┘   │  │
 │  └───────────────────────────────────────────────────┘  │
 └──────────────────────────┬──────────────────────────────┘
                            │ /api/* requests
@@ -38,10 +38,10 @@ An Angular 21 single-page application for managing grease/lubricant manufacturin
           │ ng serve       │                │ Docker
           │ proxy.conf.json│                │ nginx.conf
           ▼                │                ▼
-┌──────────────────┐       │    ┌───────────────────────┐
-│ localhost:8080   │       │    │ nginx (port 80)       │
+┌──────────────────┐       │    ┌────────────────────────┐
+│ localhost:8080   │       │    │ nginx (port 80)        │
 │ Spring Boot API  │       │    │ proxy_pass backend:8080│
-└──────────────────┘       │    └───────────────────────┘
+└──────────────────┘       │    └────────────────────────┘
 ```
 
 **Development:** Angular's dev server on port 4200 proxies `/api/*` to `localhost:8080` via `proxy.conf.json`.
